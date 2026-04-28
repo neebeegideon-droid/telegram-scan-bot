@@ -117,3 +117,14 @@ def run_web():
 if __name__ == "__main__":
     threading.Thread(target=run_bot).start()
     run_web()
+    def run_web():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(("0.0.0.0", port), Handler)
+    server.serve_forever()
+
+if __name__ == "__main__":
+    # Start web server in background
+    threading.Thread(target=run_web).start()
+
+    # Run bot in main thread (IMPORTANT)
+    run_bot()
