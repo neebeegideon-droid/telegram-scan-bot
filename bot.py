@@ -14,20 +14,20 @@ from telegram.ext import (
     filters
 )
 
-# Logging
+# ---------------- LOGGING ---------------- #
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
-# ✅ Correct token usage
+# ---------------- TOKEN ---------------- #
 BOT_TOKEN = os.getenv("8595807606:AAFJZ9RuYyEgYqJ7x-cAqzRDvu1F_jxfpGw")
 
 if not BOT_TOKEN:
     raise ValueError("BOT_TOKEN not found!")
 
-# Loading animation
+# ---------------- LOADING ---------------- #
 LOADING_STEPS = [
     ("Scanning.", 1.2),
     ("Scanning..", 1.2),
@@ -36,13 +36,9 @@ LOADING_STEPS = [
     ("Contacting servers...", 2.0),
 ]
 
-FINAL_MESSAGE = (
-    "Scan complete ✅\n\n"
-    "No issues found.\n"
-    "(Demo bot)"
-)
+FINAL_MESSAGE = "Scan complete ✅\n\nDemo completed successfully."
 
-# ---------------- BOT FUNCTIONS ---------------- #
+# ---------------- BOT HANDLERS ---------------- #
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
@@ -56,11 +52,11 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
          InlineKeyboardButton("8", callback_data="8"),
          InlineKeyboardButton("9", callback_data="9")],
         [InlineKeyboardButton("0", callback_data="0")],
-        [InlineKeyboardButton("🚀 RUN SCAN", callback_data="ban")]
+        [InlineKeyboardButton("🚀 RUN SCAN", callback_data="scan")]
     ]
 
     await update.message.reply_text(
-        "Enter a number to simulate scan:",
+        "Enter a number or press scan:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
@@ -87,7 +83,7 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await asyncio.sleep(1.5)
     await msg.edit_text(FINAL_MESSAGE)
 
-# ---------------- MAIN BOT ---------------- #
+# ---------------- BOT RUNNER ---------------- #
 
 def run_bot():
     app = Application.builder().token(BOT_TOKEN).build()
@@ -99,7 +95,7 @@ def run_bot():
     logger.info("Bot is running...")
     app.run_polling()
 
-# ---------------- WEB SERVER (FOR RENDER) ---------------- #
+# ---------------- WEB SERVER ---------------- #
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -112,19 +108,11 @@ def run_web():
     server = HTTPServer(("0.0.0.0", port), Handler)
     server.serve_forever()
 
-# ---------------- START BOTH ---------------- #
+# ---------------- START ---------------- #
 
 if __name__ == "__main__":
-    threading.Thread(target=run_bot).start()
-    run_web()
-    def run_web():
-    port = int(os.environ.get("PORT", 10000))
-    server = HTTPServer(("0.0.0.0", port), Handler)
-    server.serve_forever()
-
-if __name__ == "__main__":
-    # Start web server in background
+    # Run web server in background
     threading.Thread(target=run_web).start()
 
-    # Run bot in main thread (IMPORTANT)
+    # Run bot in main thread
     run_bot()
