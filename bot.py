@@ -1,7 +1,6 @@
 import os
 import asyncio
 import logging
-from dotenv import load_dotenv
 
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import (
